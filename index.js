@@ -4,7 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
-//middleware
+//all middleware here
 app.use(cors());
 app.use(express.json());
 
@@ -31,19 +31,19 @@ async function run() {
     const instructorsCollection = client.db("sports").collection("instructorsCollection");
     const reviewCollection = client.db("sports").collection("reviewCollection");
 
-    // classess collections
+    // classess collections here
     app.get('/classes', async (req, res) => {
         const result = await classesCollection.find().toArray();
         res.send(result);
       })
 
-    // instroctor collections
+    // instroctor collections here
     app.get('/instructors', async(req, res) =>{
         const result = await instructorsCollection.find().toArray();
         res.send(result);
     })
 
-    // review collection
+    // review collection here
     app.get('/review', async(req, res) =>{
         const result = await reviewCollection.find().toArray();
         res.send(result);
