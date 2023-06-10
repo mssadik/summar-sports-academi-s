@@ -39,9 +39,17 @@ async function run() {
       res.send(result);
     })
 
-    app.post('classes', async(req, res) =>{
+    app.post('/classes', async(req, res) =>{
       const item = req.body;
       const result = await classesCollection.insertOne(item);
+      res.send(result);
+    })
+
+    //----------------------------------------
+    app.get('/classess/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await classesCollection.findOne(query)
       res.send(result);
     })
 
@@ -54,6 +62,19 @@ async function run() {
       // }
       const query = { userEmail: email };
       const result = await classessCartCollection.find(query).toArray();
+      res.send(result);
+    });
+
+
+    //instructorcart cllection here
+    app.get('/instructorCart', async (req, res) => {
+      const email = req.query.email;
+
+      // if (!email) {
+      //  return res.send([]);
+      // }
+      const query = { userEmail: email };
+      const result = await classesCollection.find(query).toArray();
       res.send(result);
     });
 
