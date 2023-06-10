@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -35,6 +36,12 @@ async function run() {
     // classess collections here
     app.get('/classes', async (req, res) => {
       const result = await classesCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.post('classes', async(req, res) =>{
+      const item = req.body;
+      const result = await classesCollection.insertOne(item);
       res.send(result);
     })
 
@@ -81,6 +88,19 @@ async function run() {
     app.get('/review', async (req, res) => {
       const result = await reviewCollection.find().toArray();
       res.send(result);
+    })
+
+    app.post('/create-payment-intent', async(req, res) =>{
+      const {price} = req.body;
+      const amount = price*100;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      });
+      res.send({
+        clientSecret: paymentIntent.client_secret
+      })
     })
 
     // Send a ping to confirm a successful connection
