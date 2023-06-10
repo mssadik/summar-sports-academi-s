@@ -39,17 +39,38 @@ async function run() {
       res.send(result);
     })
 
-    app.post('/classes', async(req, res) =>{
+    app.post('/classes', async (req, res) => {
       const item = req.body;
       const result = await classesCollection.insertOne(item);
       res.send(result);
     })
 
     //----------------------------------------
-    app.get('/classess/:id', async(req, res) =>{
+    app.get('/classes/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await classesCollection.findOne(query)
+      res.send(result);
+    })
+
+    app.put('/classes/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedClass = req.body;
+
+      const classs = {
+        $set: {
+          class_name: updatedClass.class_name,
+          class_img: updatedClass.class_img,
+          instructor_name: updatedClass.instructor_name,
+          instructor_email: updatedClass.instructor_email,
+          available_seats: updatedClass.available_seats,
+          price: updatedClass.price,
+          status: updatedClass.status,
+        }
+      }
+      const result = await classesCollection.updateOne(filter, classs, options)
       res.send(result);
     })
 
@@ -90,7 +111,7 @@ async function run() {
     //   const result = await classessCartCollection.find().toArray();
     //   res.send(result);
     // });
-   
+
 
     app.post('/carts', async (req, res) => {
       const item = req.body;
@@ -111,9 +132,9 @@ async function run() {
       res.send(result);
     })
 
-    app.post('/create-payment-intent', async(req, res) =>{
-      const {price} = req.body;
-      const amount = price*100;
+    app.post('/create-payment-intent', async (req, res) => {
+      const { price } = req.body;
+      const amount = price * 100;
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amount,
         currency: 'usd',
