@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
 require('dotenv').config();
 const port = process.env.PORT || 5000;
@@ -54,20 +55,37 @@ async function run() {
       res.send(result);
     })
 
-    app.put('/users/:id/role', async (req, res) => {
+    
+    app.patch('/users/admin/:id', async(req, res) =>{
       const id = req.params.id;
-      const { role } = req.body;
-      const filter = { _id: new ObjectId(id) };
-      const update = { $set: { role: role } };
-    
-      const result = await usersCollection.updateOne(filter, update);
-    
-      if (result.modifiedCount === 1) {
-        res.send({ message: 'User role updated successfully' });
-      } else {
-        res.status(404).send({ message: 'User not found' });
+      const filter = {_id: new ObjectId(id)};
+      const updatedDoc = {
+        $set: {
+          role: 'admin'
+        }
       }
-    });
+      const result = await usersCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    })
+
+    app.patch('/users/instructor/:id', async(req, res) =>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updatedDoc = {
+        $set: {
+          role: 'instructor'
+        }
+      }
+      const result = await usersCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    })
+
+    app.delete('/users/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    })
     
 
     // classess collections here
