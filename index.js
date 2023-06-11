@@ -54,6 +54,22 @@ async function run() {
       res.send(result);
     })
 
+    app.put('/users/:id/role', async (req, res) => {
+      const id = req.params.id;
+      const { role } = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const update = { $set: { role: role } };
+    
+      const result = await usersCollection.updateOne(filter, update);
+    
+      if (result.modifiedCount === 1) {
+        res.send({ message: 'User role updated successfully' });
+      } else {
+        res.status(404).send({ message: 'User not found' });
+      }
+    });
+    
+
     // classess collections here
     app.get('/classes', async (req, res) => {
       const result = await classesCollection.find().toArray();
