@@ -13,16 +13,19 @@ app.use(express.json());
 
 const verifyJWT = (req, res, next) =>{
   const authorization = req.headers.authorization;
+  console.log(authorization);
   if(!authorization){
-    return res.status(401).send({error: true, message: 'unsuthroised access'});
+    
+    return res.status(401).send({error: true, message: 'unsuthroised access 11'});
   }
   const token = authorization.spilt(' ')[1];
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) =>{
     if(err){
-      return res.status(401).send({error: true, message: 'unsuthroised access'})
+      return res.status(401).send({error: true, message: 'unsuthroised access 22'})
     }
     req.decoded = decoded;
+    console.log(req.decoded);
     next();
   })
 }
@@ -65,6 +68,8 @@ async function run() {
     })
     
 
+
+    // make admin api
     // TODO:  verifyJWT 
     app.get('/users/admin/:email', async(req, res) =>{
       const email = req.params.email;
@@ -81,6 +86,7 @@ async function run() {
     })
 
 
+    // make instructor api
     app.get('/users/instructor/:email', async(req, res) =>{
       const email = req.params.email;
 
@@ -185,6 +191,7 @@ async function run() {
     })
 
     // carts collections here
+    //TODO; verifyJWT
     app.get('/carts', async (req, res) => {
       const email = req.query.email;
 
@@ -207,9 +214,9 @@ async function run() {
     app.get('/instructorCart', async (req, res) => {
       const email = req.query.email;
 
-      // if (!email) {
-      //  return res.send([]);
-      // }
+      if (!email) {
+       return res.send([]);
+      }
       const query = { userEmail: email };
       const result = await classesCollection.find(query).toArray();
       res.send(result);
