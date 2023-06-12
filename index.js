@@ -18,7 +18,7 @@ const verifyJWT = (req, res, next) =>{
     
     return res.status(401).send({error: true, message: 'unsuthroised access 11'});
   }
-  const token = authorization.spilt(' ')[1];
+  const token = authorization.split(' ')[1];
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) =>{
     if(err){
@@ -192,8 +192,9 @@ async function run() {
 
     // carts collections here
     //TODO; verifyJWT
-    app.get('/carts', async (req, res) => {
+    app.get('/carts', verifyJWT, async (req, res) => {
       const email = req.query.email;
+      // console.log(req.headers.authorization)
 
       if (!email) {
        return res.send([]);
@@ -202,7 +203,7 @@ async function run() {
       // const decodedEmail = req.decoded.email;
       // if(email !== decodedEmail){
       //   return res.status(403).send({error: true, message: 'unauthorixed access'})
-      // }
+      //  }
 
       const query = { userEmail: email };
       const result = await classessCartCollection.find(query).toArray();
@@ -255,6 +256,8 @@ async function run() {
       res.send(result);
     })
 
+    //create-payment-intent
+    
     app.post('/create-payment-intent', async (req, res) => {
       const { price } = req.body;
       const amount = price * 100;
