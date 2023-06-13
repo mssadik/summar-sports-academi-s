@@ -53,6 +53,7 @@ async function run() {
     const instructorsCollection = client.db("sports").collection("instructorsCollection");
     const reviewCollection = client.db("sports").collection("reviewCollection");
     const usersCollection = client.db("sports").collection("usersCollection");
+    const paymentsCollection = client.db("sports").collection("paymentsCollection");
 
     // json web token
     app.post('/jwt', (req, res) =>{
@@ -270,6 +271,13 @@ async function run() {
       res.send({
         clientSecret: paymentIntent.client_secret
       })
+    })
+
+    //payment apis
+    app.post('/payments', verifyJWT, async(req, res) =>{
+      const payment = req.body;
+      const result = await paymentsCollection.insertOne(payment);
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
